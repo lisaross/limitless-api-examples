@@ -25,16 +25,26 @@ def get_lifelogs(api_key, api_url=os.getenv("LIMITLESS_API_URL") or "https://api
         if cursor:
             params["cursor"] = cursor
             
+        url = f"{api_url}/{endpoint}"
+        print(f"\nMaking request to: {url}")
+        print(f"With parameters: {params}")
+            
         response = requests.get(
-            f"{api_url}/{endpoint}",
+            url,
             headers={"X-API-Key": api_key},
             params=params,
         )
+
+        print(f"Response status: {response.status_code}")
+        if response.status_code != 200:
+            print(f"Response body: {response.text}")
 
         if not response.ok:
             raise Exception(f"HTTP error! Status: {response.status_code}")
 
         data = response.json()
+        print(f"Response data: {data}")
+        
         lifelogs = data.get("data", {}).get("lifelogs", [])
         
         # Add transcripts from this batch
